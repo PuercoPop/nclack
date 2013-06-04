@@ -10,4 +10,5 @@
 
   :pathname "src/"
   :components ((:file "packages")
-               (:file "nclack")))
+               (:file "nclack")
+               (:file "request")))

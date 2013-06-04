@@ -1,2 +1,3 @@
 (defpackage #:nclack
-  (:use #:cl))
+  (:use #:cl)
+  (:export :make-request))
