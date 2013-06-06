@@ -1,3 +1,4 @@
 (defpackage #:nclack
-  (:use #:cl)
+  (:use #:cl #:cl-ppcre)
+  (:import-from #:alexandria :make-keyword)
   (:export :make-request))

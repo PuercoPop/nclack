@@ -6,7 +6,9 @@
   :version "20130604"
   :serial t
   :license "<3"
-  :depends-on (#:usocket)
+  :depends-on (#:usocket
+               #:cl-ppcre
+               #:alexandria)
 
   :pathname "src/"
   :components ((:file "packages")
