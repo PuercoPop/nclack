@@ -19,7 +19,7 @@
                                                       *specs-dir*))))
          (created-request (nclack:make-request http-stream)))
     (close http-stream)
-    (is (eq created-request expected-request))))
+    (is (equal created-request expected-request))))
 
 (defun test-runner ()
   (run! 'request-suite))
