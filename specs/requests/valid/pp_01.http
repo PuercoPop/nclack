@@ -1,0 +1,13 @@
+PROXY TCP4 192.168.0.1 192.168.0.11 56324 443
+
+GET /stuff/here?foo=bar HTTP/1.0
+
+Server: http://127.0.0.1:5984
+
+Content-Type: application/json
+
+Content-Length: 14
+
+
+
+{"nom": "nom"}

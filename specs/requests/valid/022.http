@@ -1,0 +1,9 @@
+GET /first HTTP/1.0
+
+Connection: Keep-Alive
+
+
+
+GET /second HTTP/1.1
+
+

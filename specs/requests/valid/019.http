@@ -1,0 +1,7 @@
+GET /first HTTP/1.0
+
+
+
+GET /second HTTP/1.1
+
+

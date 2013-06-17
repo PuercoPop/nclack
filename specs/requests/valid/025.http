@@ -1,0 +1,37 @@
+POST /chunked_cont_h_at_first HTTP/1.1
+
+Content-Length: -1
+
+Transfer-Encoding: chunked
+
+
+
+5; some; parameters=stuff
+
+hello
+
+6; blahblah; blah
+
+ world
+
+0
+
+
+
+PUT /chunked_cont_h_at_last HTTP/1.1
+
+Transfer-Encoding: chunked
+
+Content-Length: -1
+
+
+
+5; some; parameters=stuff
+
+hello
+
+6; blahblah; blah
+
+ world
+
+0

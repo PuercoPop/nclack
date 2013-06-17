@@ -1,0 +1,211 @@
+PUT /stuff/here?foo=bar HTTP/1.0
+
+Server: http://127.0.0.1:5984
+
+Content-Type: application/json
+
+Content-Length: 14
+
+header0: 0
+
+header1: 1
+
+header2: 2
+
+header3: 3
+
+header4: 4
+
+header5: 5
+
+header6: 6
+
+header7: 7
+
+header8: 8
+
+header9: 9
+
+header10: 10
+
+header11: 11
+
+header12: 12
+
+header13: 13
+
+header14: 14
+
+header15: 15
+
+header16: 16
+
+header17: 17
+
+header18: 18
+
+header19: 19
+
+header20: 20
+
+header21: 21
+
+header22: 22
+
+header23: 23
+
+header24: 24
+
+header25: 25
+
+header26: 26
+
+header27: 27
+
+header28: 28
+
+header29: 29
+
+header30: 30
+
+header31: 31
+
+header32: 32
+
+header33: 33
+
+header34: 34
+
+header35: 35
+
+header36: 36
+
+header37: 37
+
+header38: 38
+
+header39: 39
+
+header40: 40
+
+header41: 41
+
+header42: 42
+
+header43: 43
+
+header44: 44
+
+header45: 45
+
+header46: 46
+
+header47: 47
+
+header48: 48
+
+header49: 49
+
+header50: 50
+
+header51: 51
+
+header52: 52
+
+header53: 53
+
+header54: 54
+
+header55: 55
+
+header56: 56
+
+header57: 57
+
+header58: 58
+
+header59: 59
+
+header60: 60
+
+header61: 61
+
+header62: 62
+
+header63: 63
+
+header64: 64
+
+header65: 65
+
+header66: 66
+
+header67: 67
+
+header68: 68
+
+header69: 69
+
+header70: 70
+
+header71: 71
+
+header72: 72
+
+header73: 73
+
+header74: 74
+
+header75: 75
+
+header76: 76
+
+header77: 77
+
+header78: 78
+
+header79: 79
+
+header80: 80
+
+header81: 81
+
+header82: 82
+
+header83: 83
+
+header84: 84
+
+header85: 85
+
+header86: 86
+
+header87: 87
+
+header88: 88
+
+header89: 89
+
+header90: 90
+
+header91: 91
+
+header92: 92
+
+header93: 93
+
+header94: 94
+
+header95: 95
+
+header96: 96
+
+header97: 97
+
+header98: 98
+
+header99: 99
+
+
+
+{"nom": "nom"}
