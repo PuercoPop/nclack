@@ -17,9 +17,15 @@
              (expected-request (read (open
                                       (merge-pathnames "requests/valid/001.lisp"
                                                        *specs-dir*))))
+             (request-tests (read (open
+                                   (merge-pathnames "requests/valid/001.spec"
+                                                    *specs-dir*))))
              (created-request (nclack:make-request http-stream)))
+        (declare (special expected-request)
+                 (special created-request))
         (close http-stream)
-        (is (equal created-request expected-request))))
+        (eval request-tests)
+        ))
 
 (defun test-runner ()
   (run! 'request-suite))
