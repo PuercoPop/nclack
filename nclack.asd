@@ -6,11 +6,14 @@
   :version "20130604"
   :serial t
   :license "<3"
-  :depends-on (#:usocket
-               #:cl-ppcre
-               #:alexandria)
+  :depends-on (:iolib
+               :cl-ppcre
+               :alexandria)
 
   :pathname "src/"
   :components ((:file "packages")
                (:file "nclack")
-               (:file "request")))
+               (:module "request"
+                :components
+                ((:file "interface")
+                 (:file "implementation")))))

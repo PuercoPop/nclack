@@ -1,4 +1,4 @@
-(in-package :nclack)
+(in-package :nclack.request)
 
 (defun make-request (in-stream)
   (process-first-line (read-line in-stream)))
