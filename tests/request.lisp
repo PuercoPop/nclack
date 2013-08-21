@@ -1,12 +1,42 @@
 (in-package :nclack-tests)
 
-(defparameter *specs-dir* (system-relative-pathname :nclack-tests
-                                                    "specs/"))
-
 (def-suite request-suite
     :description "Testing for the conversion between HTTP request to the Clack
     'environ' representation.")
 (in-suite request-suite)
+
+(test parse-first-line ()
+      (let ((result (with-input-from-string
+                        (in-stream "PUT /stuff/here?foo=bar HTTP/1.0")
+                      (parse-first-line (list) in-stream))))
+        (:request-method result is :PUT)
+        (:request-uri result "/stuff/here?foo=bar")
+        (:server-protocol :HTTP/1.0)))
+
+;; Parse line
+(let ((result (with-input-from-string
+                  (in-stream (format nil
+                                     "PUT /stuff/here?foo=bar HTTP/1.0~C~C"
+                                     #\Return
+                                     #\Linefeed))
+                (parse-first-line (list) in-stream)))))
+
+;; Parse headers
+(with-input-from-string (in-stream
+                         (format nil
+                                 "Server: http://127.0.0.1:5984~C~CContent-Type: application/json~C~CContent-Length: 14~C~C~C~C" #\Return #\Linefeed #\Return #\Linefeed #\Return #\Linefeed #\Return #\Linefeed))
+  (parse-headers (list) in-stream))
+
+(with-input-from-string (in-stream (format nil "A~C~CB~C~C"
+                                           #\Return #\Linefeed
+                                           #\Return #\Linefeed))
+  (is "A" (read-http-line in-stream))
+  (is "B" (read-http-line in-stream)))
+
+
+(test parse-headers ())
+(test parse-body ())
+
 
 ;; 1. Read 001.http file
 ;; 2. Compare the request to the form in 001.lisp
@@ -24,30 +54,4 @@
         (declare (special expected-request)
                  (special created-request))
         (close http-stream)
-        (eval request-tests)
-        ))
-
-(defun test-runner ()
-  (run! 'request-suite))
-
-(defun setup-test-tuples (path)
-  "Get all the *.http files in the directory, match them with their *.lisp and *spec counterparts And return a list of tuples in the form (001.http 001.lisp 001.spec). Signal a condition if no *.lisp or *.spec counterpart found."
-  (let ((result (list)))
-    (dolist (file (directory path))
-      ;; (format t "~A~%" file)
-      (setf result (append result (list (get-the-counterparts file)))))
-    result))
-
-(defun get-the-counterparts (absolute-filename)
-  "For each file *.http get the *.lisp and *.spec counterparts"
-  (flet ((add-directory (filename)
-           (make-pathname :directory (pathname-directory #P"/Users/PuercoPop/quicklisp/local-projects/nclack/specs/requests/valid/pp_01.http")
-                          :defaults filename)))
-    (let* ((dir (make-pathname :directory
-                               (pathname-directory absolute-filename)))
-           (filename (file-namestring file))
-           (request-file (cl-ppcre:regex-replace "http$" filename "lisp"))
-           (spec-file (cl-ppcre:regex-replace "http$" filename "spec")))
-      `(,absolute-filename
-        ,(add-directory request-file)
-        ,(add-directory spec-file)))))
+        (eval request-tests)))
