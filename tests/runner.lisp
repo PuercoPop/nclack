@@ -1,6 +1,7 @@
 (in-package :nclack-tests)
 
 (defun test-runner ()
+  (run! 'http-parser-suite)
   (run! 'request-suite))
 
 (defun test-collector ()
