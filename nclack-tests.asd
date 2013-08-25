@@ -6,7 +6,9 @@
 (defsystem nclack-tests
   :depends-on (:nclack
                :fiveam
-               :flexi-streams)
+               :flexi-streams
+               :cl-fad
+               :optima)
   :pathname "tests/"
   :serial t
   :components ((:file "packages")
@@ -17,4 +19,7 @@
                (:file "request")))
 
 (defmethod perform ((op test-op) (system (eql (find-system :nclack))))
-  (nclack-tests:test-runner))
+  (compile-file (asdf:system-relative-pathname :nclack-tests "tests/packages.lisp"))
+  (funcall (find-symbol "test-runner" :nclack-tests))
+  ;; (nclack-tests:test-runner)
+  )
