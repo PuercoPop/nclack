@@ -19,7 +19,5 @@
                (:file "request")))
 
 (defmethod perform ((op test-op) (system (eql (find-system :nclack))))
-  (compile-file (asdf:system-relative-pathname :nclack-tests "tests/packages.lisp"))
-  (funcall (find-symbol "test-runner" :nclack-tests))
-  ;; (nclack-tests:test-runner)
-  )
+  (asdf:load-system :nclack-tests)  
+  (funcall (find-symbol "TEST-RUNNER" :nclack-tests)))
