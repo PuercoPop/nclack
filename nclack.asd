@@ -1,9 +1,6 @@
 (in-package :cl-user)
-(defpackage :nclack-system
-  (:use :cl :asdf))
-(in-package :nclack-system)
 
-(defsystem nclack
+(asdf:defsystem nclack
   :name "nclack"
   :description "not clack"
   :long-description "An http server that complies with the clack interface, hopefully."
@@ -20,8 +17,27 @@
   :components ((:file "packages")
                (:file "nclack")
                (:module "request"
-                :components
-                ((:file "interface")
-                 (:file "implementation")
-                 (:file "parser"))))
-  :in-order-to ((test-op (test-op nclack-tests))))
+                        :components
+                        ((:file "interface")
+                         (:file "implementation")
+                         (:file "parser")))))
+
+(asdf:defsystem nclack-tests
+  :depends-on (:nclack
+               :fiveam
+               :flexi-streams
+               :cl-fad
+               :optima)
+  :pathname "tests/"
+  :serial t
+  :components ((:file "packages")
+               (:file "conf")
+               (:file "utils")
+               (:file "runner")
+               (:file "parser")
+               (:file "request")))
+
+(defmethod asdf:perform ((op asdf:test-op)
+                         (system (eql (asdf:find-system :nclack))))
+  (asdf:load-system :nclack-tests)
+  (asdf/package:symbol-call :nclack-tests 'test-runner))
