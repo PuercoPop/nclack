@@ -64,19 +64,29 @@
 (deffsm chunked-body ()
   ((buffer :initarg :buffer :initform nil :accessor buffer)
    (body :accessor body)
-   (counter :initarg counter :initform 0 :accessor counter)))
+   (counter :initarg counter :initform 0 :accessor counter)
+   (next-line :initform :start-counter-line :accessor next-line
+              :documentation "Control to which state the end of line, goes to
+              next. Two states, :start-counter-line and :start-content-line."))
+  (:default-initargs . (:state :start-counter-line)))
 
-(defstate chunked-body :start-line (fsm c)
+(defmethod toggle-line ((fsm chunked-body))
+  (if (eq :start-counter-line)
+      :start-content-line
+      :start-counter-line))
+
+;; Todo, fix hex number counter. Split start of content vs start of counter line. Finish terminating conditions.
+(defstate chunked-body :start-counter-line (fsm c)
   (cond
+    ((char= #\0 :end-body))
     ((is-digit-p c)
      (progn
        (setf (counter fsm) (+ (* 10 (counter fsm)) (digit-char-p c)))
        :read-line-length))
-    ((char= c #\Return) :end-body)
     (t (error 'chunked-body-parse-error
               :message (format nil
-                               "Lines should begin with a digit or ~C, got ~C instead."
-                               #\Return c)))))
+                               "Lines should begin with a digit unless at the end of body, got ~C instead."
+                               c)))))
 
 (defstate chunked-body :read-line-length (fsm c)
   (cond
@@ -84,10 +94,13 @@
      (progn
        (setf (counter fsm) (+ (* 10 (counter fsm)) (digit-char-p c)))
        :read-line-length))
-    (t (progn
-         (decf (counter fsm))
-         (setf (buffer fsm) (cons c (buffer fsm)))
-         :read-line-content))))
+    ((char= c #\Return) :end-line)
+    (t (error 'chunked-body-parse-error
+              :message (format nil
+                               "Only hexadecimals digit, ~C and ~C permitted in the cuurent line. Got ~C instead"
+                               #\Return
+                               #\Linefeed
+                               c)))))
 
 (defstate chunked-body :read-line-content (fsm c)
   (if (eql (counter fsm) 0)
@@ -104,10 +117,10 @@
 
 (defstate chunked-body :end-line (fsm c)
   (if (char= c #\Linefeed)
-      :start-line
+      (setf (next-line fsm) (toggle-line fsm))
       (error 'chunked-body-parse-error
               :message (format nil
-                               "Expecting the body to terminate with ~C, got ~C instead."
+                               "Lines should end with ~C, got ~C instead."
                                #\Linefeed c))))
 
 (defstate chunked-body :end-body ()
