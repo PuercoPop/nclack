@@ -11,14 +11,17 @@
   :depends-on (:iolib
                :cl-ppcre
                :alexandria
-               :optima)
+               :optima
+               :closer-mop)
 
   :pathname "src/"
   :components ((:file "packages")
                (:file "nclack")
                (:module "request"
                         :components
-                        ((:file "interface")
+                        ((:file "utils")
+                         (:file "fsm")
+                         (:file "interface")
                          (:file "implementation")
                          (:file "parser")))))
 

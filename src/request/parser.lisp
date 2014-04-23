@@ -35,3 +35,78 @@
       env
       (append env (list :raw-body stream))))
 
+
+(defun parse-body (env stream)
+  (if (eq 'eof (peek-char nil stream nil 'eof))
+      env
+      (append env (list :raw-body stream))))
+
+;; plist, stream => plist
+(defun parse-chunked-body (env stream)
+  (append env
+          (list :raw-body
+                (loop
+                   :for line = (read stream)
+                   :until
+                   :collect)))
+)
+
+(defun %parse-chunked-boy (stream)
+  "First look for the lenght line, then read that many chars from the stream
+  and verify it is crlf terminated."  )
+
+(defun is-digit-p (char)
+  (member char '(#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9 #\0) :test #'char=))
+
+(deffsm chunked-body ()
+  ((buffer :initarg :buffer :initform nil :accessor buffer)
+   (body :accessor body)
+   (counter :initarg counter :initform 0 :accessor counter)))
+
+(defstate chunked-body :start-line (fsm c)
+  (cond
+    ((is-digit-p c)
+     (progn
+       (setf (counter fsm) (+ (* 10 (counter fsm)) (digit-char-p c)))
+       :read-line-length))
+    ((char= c #\Return) :end-body)
+    (t :error)))
+
+(defstate chunked-body :read-line-length (fsm c)
+  (cond
+    ((is-digit-p c)
+     (progn
+       (setf (counter fsm) (+ (* 10 (counter fsm)) (digit-char-p c)))
+       :read-line-length))
+    (t (progn
+         (decf (counter fsm))
+         (setf (buffer fsm) (cons c (buffer fsm)))
+         :read-line-content))))
+
+(defstate chunked-body :read-line-content (fsm c)
+  (if (eql (counter fsm) 0)
+      (if (char= c #\Return)
+          :end-line
+          :error)
+      (progn
+         (decf (counter fsm))
+         (setf (buffer fsm) (cons c (buffer fsm)))
+         :read-line-content)))
+
+(defstate chunked-body :end-line (fsm c)
+  (if (char= c #\Linefeed)
+      :start-line
+      :error))
+
+(defstate chunked-body :end-body ()
+  (cond
+    ((char= #\Linefeed c)
+     (progn
+       (setf (body fsm) (with-output-to-string (stream)
+                          (dolist (char (buffer fsm))
+                            (princ char stream))
+                          stream))
+       :finish))
+    (t :error)))
+
+(defstate chunked-body :finish (fsm c))

@@ -6,8 +6,17 @@
 (defpackage :nclack.utils
   (:use :cl))
 
-(defpackage :nclack.request
+(defpackage :fsm
   (:use :cl)
+  (:export :standard-state-machine
+           :standard-state-machine-event
+           :last-event
+           :state
+           :defstate
+           :deffsm))
+
+(defpackage :nclack.request
+  (:use :cl :fsm)
   (:import-from :alexandria #:make-keyword))
 
 (defpackage :nclack.server
