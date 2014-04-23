@@ -45,15 +45,15 @@
 (defun parse-chunked-body (env stream)
   (append env
           (list :raw-body
-                (loop
-                   :for line = (read stream)
-                   :until
-                   :collect)))
-)
+               (%parse-chunked-body stream))))
 
-(defun %parse-chunked-boy (stream)
-  "First look for the lenght line, then read that many chars from the stream
-  and verify it is crlf terminated."  )
+;; stream => stream
+(defun %parse-chunked-body (stream)
+  (let
+      ((fsm (make-instance 'chunked-body :state :start-line)))
+    (loop
+       :until (eq (state fsm) :finish)
+       :finally (return (body fsm)))))
 
 (defun is-digit-p (char)
   (member char '(#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9 #\0) :test #'char=))
