@@ -2,7 +2,7 @@
 
 (define-condition http-parse-error ()
   ((prefix :initform "Parse Error" :reader prefix)
-   (message :initarg message :reader message))
+   (message :initarg :message :reader message))
   (:report (lambda (condition stream)
              (format stream "~S: ~S"
                      (prefix condition)

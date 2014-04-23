@@ -49,7 +49,7 @@
   (let
       ((fsm (make-instance 'chunked-body)))
     (loop
-       :do (funcall fsm (read-char stream))
+       :do (funcall fsm (read-char stream nil 'eof))
        :until (eq (state fsm) :finish)
        :finally (return (body fsm)))))
 
@@ -62,20 +62,20 @@
 (deffsm chunked-body ()
   ((buffer :initarg :buffer :initform nil :accessor buffer)
    (body :accessor body)
-   (counter :initarg counter :initform 0 :accessor counter)
+   (counter :initarg :counter :initform 0 :accessor counter)
    (next-line :initform :start-counter-line :accessor next-line
               :documentation "Control to which state the end of line, goes to
-              next. Two states, :start-counter-line and :start-content-line."))
+              next. Two states, :start-counter-line and :read-line-content."))
   (:default-initargs . (:state :start-counter-line)))
 
 (defmethod toggle-line ((fsm chunked-body))
   (if (eq :start-counter-line (next-line fsm))
-      :start-content-line
+      :read-line-content
       :start-counter-line))
 
 (defstate chunked-body :start-counter-line (fsm c)
   (cond
-    ((char= #\0 c) :penultimate-end-of-line)
+    ((char= #\0 c) :penultimate-line-penultimate-char)
     ((is-digit-p c)
      (progn
        (setf (counter fsm) (+ (* 16 (counter fsm)) (digit-char-p c 16)))
@@ -120,10 +120,19 @@
                                "Lines should end with ~C, got ~C instead."
                                #\Linefeed c))))
 
-(defstate chunked-body :penultimate-end-of-line (fsm c)
+(defstate chunked-body :penultimate-line-penultimate-char (fsm c)
+  (if (char= #\Return c)
+      :penultimate-line-end-of-line
+      (error 'chunked-body-parse-error
+             :message (format nil
+                              "Penultimate character of penultimate line. Expected ~C, got ~C instead."
+                              #\Return
+                              c))))
+
+(defstate chunked-body :penultimate-line-end-of-line (fsm c)
   (if (char= #\Linefeed c)
       :last-line
-      (error 'chunked-body
+      (error 'chunked-body-parse-error
              :message (format nil
                               "End of penultimate line. Expected ~C, got ~C instead."
                               #\Linefeed
@@ -133,7 +142,7 @@
   (if (char= #\Return c)
       :end-body
       (error
-       'chunked-body
+       'chunked-body-parse-error
        :message (format nil
                         "Beginning of Last Line. Expected ~C, got ~C instead."
                         #\Return
@@ -144,7 +153,7 @@
     ((char= #\Linefeed c)
      (progn
        (setf (body fsm) (with-output-to-string (stream)
-                          (dolist (char (buffer fsm))
+                          (dolist (char (nreverse (buffer fsm)))
                             (princ char stream))
                           stream))
        :finish))
