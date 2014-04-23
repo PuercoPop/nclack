@@ -1,6 +1,6 @@
 (in-package :nclack.request)
 
-(define-condition parse-error ()
+(define-condition http-parse-error ()
   ((prefix :initform "Parse Error" :reader prefix)
    (message :initarg message :reader message))
   (:report (lambda (condition stream)
@@ -9,5 +9,5 @@
                      (message condition) )))
   (:documentation "Signals errors ocurred during parsing."))
 
-(define-condition chunked-body-parse-error (parse-error)
+(define-condition chunked-body-parse-error (http-parse-error)
   ((prefix :initform "Chunked Body")))
