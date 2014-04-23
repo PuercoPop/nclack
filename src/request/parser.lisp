@@ -35,13 +35,6 @@
       env
       (append env (list :raw-body stream))))
 
-
-(defun parse-body (env stream)
-  (if (eq 'eof (peek-char nil stream nil 'eof))
-      env
-      (append env (list :raw-body stream))))
-
-
 ;; Chunked-body requires http1.1, header Transfer-Encoding field set to chunked
 ;; and content-length not set.
 
@@ -54,8 +47,9 @@
 ;; stream => stream
 (defun %parse-chunked-body (stream)
   (let
-      ((fsm (make-instance 'chunked-body :state :start-line)))
+      ((fsm (make-instance 'chunked-body)))
     (loop
+       :do (funcall fsm (read-char stream))
        :until (eq (state fsm) :finish)
        :finally (return (body fsm)))))
 
@@ -75,13 +69,13 @@
   (:default-initargs . (:state :start-counter-line)))
 
 (defmethod toggle-line ((fsm chunked-body))
-  (if (eq :start-counter-line)
+  (if (eq :start-counter-line (next-line fsm))
       :start-content-line
       :start-counter-line))
 
 (defstate chunked-body :start-counter-line (fsm c)
   (cond
-    ((char= #\0 :penultimate-end-of-line))
+    ((char= #\0 c) :penultimate-end-of-line)
     ((is-digit-p c)
      (progn
        (setf (counter fsm) (+ (* 16 (counter fsm)) (digit-char-p c 16)))
@@ -145,7 +139,7 @@
                         #\Return
                         c))))
 
-(defstate chunked-body :end-body ()
+(defstate chunked-body :end-body (fsm c)
   (cond
     ((char= #\Linefeed c)
      (progn
