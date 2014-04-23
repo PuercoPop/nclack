@@ -19,7 +19,8 @@
                (:file "nclack")
                (:module "request"
                         :components
-                        ((:file "utils")
+                        ((:file "conditions")
+                         (:file "utils")
                          (:file "fsm")
                          (:file "interface")
                          (:file "implementation")

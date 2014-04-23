@@ -70,7 +70,10 @@
        (setf (counter fsm) (+ (* 10 (counter fsm)) (digit-char-p c)))
        :read-line-length))
     ((char= c #\Return) :end-body)
-    (t :error)))
+    (t (error 'chunked-body-parse-error
+              :message (format nil
+                               "Lines should begin with a digit or ~C, got ~C instead."
+                               #\Return c)))))
 
 (defstate chunked-body :read-line-length (fsm c)
   (cond
@@ -87,7 +90,10 @@
   (if (eql (counter fsm) 0)
       (if (char= c #\Return)
           :end-line
-          :error)
+          (error 'chunked-body-parse-error
+              :message (format nil
+                               "End of line, Expecting ~C, got ~C instead."
+                               #\Return c)))
       (progn
          (decf (counter fsm))
          (setf (buffer fsm) (cons c (buffer fsm)))
@@ -96,7 +102,10 @@
 (defstate chunked-body :end-line (fsm c)
   (if (char= c #\Linefeed)
       :start-line
-      :error))
+      (error 'chunked-body-parse-error
+              :message (format nil
+                               "Expecting the body to terminate with ~C, got ~C instead."
+                               #\Linefeed c))))
 
 (defstate chunked-body :end-body ()
   (cond
@@ -107,6 +116,9 @@
                             (princ char stream))
                           stream))
        :finish))
-    (t :error)))
+    (t (error 'chunked-body-parse-error
+              :message (format nil
+                               "Expecting the body to terminate with ~C, got ~C instead."
+                               #\Linefeed c)))))
 
 (defstate chunked-body :finish (fsm c))
