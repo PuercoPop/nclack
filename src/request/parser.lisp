@@ -41,6 +41,10 @@
       env
       (append env (list :raw-body stream))))
 
+
+;; Chunked-body requires http1.1, header Transfer-Encoding field set to chunked
+;; and content-length not set.
+
 ;; plist, stream => plist
 (defun parse-chunked-body (env stream)
   (append env
@@ -75,10 +79,9 @@
       :start-content-line
       :start-counter-line))
 
-;; Todo, fix hex number counter. Split start of content vs start of counter line. Finish terminating conditions.
 (defstate chunked-body :start-counter-line (fsm c)
   (cond
-    ((char= #\0 :end-body))
+    ((char= #\0 :penultimate-end-of-line))
     ((is-digit-p c)
      (progn
        (setf (counter fsm) (+ (* 16 (counter fsm)) (digit-char-p c 16)))
@@ -122,6 +125,25 @@
               :message (format nil
                                "Lines should end with ~C, got ~C instead."
                                #\Linefeed c))))
+
+(defstate chunked-body :penultimate-end-of-line (fsm c)
+  (if (char= #\Linefeed c)
+      :last-line
+      (error 'chunked-body
+             :message (format nil
+                              "End of penultimate line. Expected ~C, got ~C instead."
+                              #\Linefeed
+                              c))))
+
+(defstate chunked-body :last-line (fsm c)
+  (if (char= #\Return c)
+      :end-body
+      (error
+       'chunked-body
+       :message (format nil
+                        "Beginning of Last Line. Expected ~C, got ~C instead."
+                        #\Return
+                        c))))
 
 (defstate chunked-body :end-body ()
   (cond
