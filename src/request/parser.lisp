@@ -81,7 +81,7 @@
     ((char= #\0 :end-body))
     ((is-digit-p c)
      (progn
-       (setf (counter fsm) (+ (* 10 (counter fsm)) (digit-char-p c)))
+       (setf (counter fsm) (+ (* 16 (counter fsm)) (digit-char-p c 16)))
        :read-line-length))
     (t (error 'chunked-body-parse-error
               :message (format nil
@@ -92,7 +92,7 @@
   (cond
     ((is-digit-p c)
      (progn
-       (setf (counter fsm) (+ (* 10 (counter fsm)) (digit-char-p c)))
+       (setf (counter fsm) (+ (* 16 (counter fsm)) (digit-char-p c 16)))
        :read-line-length))
     ((char= c #\Return) :end-line)
     (t (error 'chunked-body-parse-error
