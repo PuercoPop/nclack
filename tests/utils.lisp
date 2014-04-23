@@ -10,12 +10,20 @@
 ;;            (string= "/stuff/here?foo=bar"))))
 ;; (is (match result ((property :server-protocol x) (eq x :HTTP/1.0))))
 (defmacro conforms-to (property-list)
-  `(progn ,@(loop for (key value) on property-list by #'cddr
-              collect
-                `(is (match result ((property ,key x) (eq x ,value)))))))
+  `(progn ,@(loop :for (key value) :on property-list :by #'cddr
+               :collect
+               `(is (match result ((property ,key x) (eq x ,value)))))))
 
 ;; Use case
 ;; (let ((result (list :method :PUT :request-uri "blah" :server-protocol :HTTP/1.0)))
 ;;   (conforms-to (:method :PUT
 ;;                  :request-uri "blah"
 ;;                  :server-protocol :HTTP/1.0)))
+
+
+(defun stream-to-string (stream)
+  (concatenate 'string
+               (loop
+                  :for char = (read-char stream nil 'eof)
+                  :until (eq char 'eof)
+                  :collect char)))
