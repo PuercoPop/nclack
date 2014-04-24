@@ -3,19 +3,22 @@ Programatically build  the gunicorn test suite from the specs.
 """
 
 from os import listdir
-from os.path import dirname, join, realpath
+from os.path import dirname, join, realpath, splitext, basename
 
-spec_dir = realpath(join(__file__, "specs/"))
+spec_dir = realpath(join(dirname(__file__), "specs/"))
 valid_spec_dir = join(spec_dir, "requests", "valid")
 output_file = join(spec_dir, "gunicorn.lisp")
+test_file = realpath(join(dirname(__file__), "gunicorn-tests.lisp"))
 
 prelude="""
 (in-package :nclack-tests)
 
-(def-suite request-suite
-    :description "Testing for the conversion between HTTP request to the Clack
-    'environ' representation.")
+;; Testing for the conversion between HTTP request to the Clack 'environ'
+;; representation.
+(defsuite (gunicorn-request-suite :in root-suite)
+    (run-child-tests))
 (in-suite request-suite)
+
 """
 
 test_template = """
@@ -29,12 +32,14 @@ test_template = """
         (conforms-to pattern-request created-request)))"""
 
 spec_files = listdir(valid_spec_dir)
+spec_files = map(lambda x: realpath(join(valid_spec_dir, x)), spec_files)
+
 http_requests = filter( lambda x: x.endswith('http'), spec_files)
 clack_requests = filter( lambda x: x.endswith('lisp'), spec_files)
 http_requests.sort()
 clack_requests.sort()
 http_requests = http_requests[:len(clack_requests)]
-names = map(lambda x: x.split('.')[0], a)
+names = map(lambda x: splitext(basename(x))[0], http_requests)
 
 with open(test_file, 'w') as output_file:
     output_file.write(prelude)
