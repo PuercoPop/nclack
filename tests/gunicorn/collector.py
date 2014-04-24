@@ -18,7 +18,15 @@ prelude="""
 (in-suite request-suite)
 """
 
-test_template = """"""
+test_template = """
+(deftest test-{name} ()
+      (let ((created-request
+             (with-open-file (input-stream #P"{http_request_path}"
+                              :direction :input)
+                (nclack:make-request input-stream)))
+            (pattern-request {clack_file_contents}))
+
+        (conforms-to pattern-request created-request)))"""
 
 spec_files = listdir(valid_spec_dir)
 http_requests = filter( lambda x: x.endswith('http'), spec_files)
@@ -30,7 +38,10 @@ names = map(lambda x: x.split('.')[0], a)
 
 with open(test_file, 'w') as output_file:
     output_file.write(prelude)
-    for name, request, spec in zip(names, http_requests, clack_requests):
-        output_file.write(test_template.format(name=name,
-                                               http_requests=http_requests,
-                                               clack_requests=clack_requests))
+    for name, request_path, clack_request_path in zip(names, http_requests, clack_requests):
+        with open(clack_request_path, 'r') as clack_file:
+            clack_file_contents = clack_file.read()
+            output_file.write(test_template.format(
+                name=name,
+                http_request_path=request_path,
+                clack_file_contents=clack_file_contents))
