@@ -1,8 +1,3 @@
-(defpackage :nclack
-  (:use :cl :cl-ppcre)
-  (:import-from :alexandria :make-keyword)
-  (:export :make-request))
-
 (defpackage :nclack.utils
   (:use :cl))
 
@@ -16,8 +11,14 @@
            :deffsm))
 
 (defpackage :nclack.request
-  (:use :cl :fsm)
-  (:import-from :alexandria #:make-keyword))
+  (:use :cl :fsm :nclack.utils)
+  (:import-from :alexandria #:make-keyword)
+  (:export
+   #:make-request))
 
 (defpackage :nclack.server
   (:use :cl :iolib))
+
+(uiop/package:define-package :nclack
+  (:use :cl :nclack.request)
+  (:reexport :nclack.request))

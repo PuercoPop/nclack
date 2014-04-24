@@ -1,29 +1,42 @@
 (in-package :nclack-tests)
 
-;; Design example
-;; (conforms-to '(:method :PUT
-;;                :request-uri "blah"
-;;                :server-protocol :HTTP/1.0))
-;; expands into
-;; (is (match result ((property :request-method x) (eq x :PUT))))
-;; (is (match result ((property :request-uri x)
-;;            (string= "/stuff/here?foo=bar"))))
-;; (is (match result ((property :server-protocol x) (eq x :HTTP/1.0))))
-(defmacro conforms-to (property-list)
-  `(progn ,@(loop :for (key value) :on property-list :by #'cddr
-               :collect
-               `(is (match result ((property ,key x) (eq x ,value)))))))
-
-;; Use case
-;; (let ((result (list :method :PUT :request-uri "blah" :server-protocol :HTTP/1.0)))
-;;   (conforms-to (:method :PUT
-;;                  :request-uri "blah"
-;;                  :server-protocol :HTTP/1.0)))
-
-
 (defun stream-to-string (stream)
   (concatenate 'string
                (loop
                   :for char = (read-char stream nil 'eof)
                   :until (eq char 'eof)
                   :collect char)))
+
+
+(defun conforms-to (pattern-request request-to-test)
+  "Go one by one, inspecting the pattern-request for keys that should be
+present in a clack request and, if presemt in the pattern-request, compare the
+two values with the appropiate form. EQ for keywords, EQL for numbers, STRING=
+for strings and STRING= on the STREAM-TO-STRING for streams."
+  (is (awhen (getf pattern-request :request-method)
+         (eq it
+             (getf request-to-test :request-method))))
+  (is (awhen (getf pattern-request :script-name)
+         (string= it
+                  (getf request-to-test :script-name))))
+  (is (awhen (getf pattern-request :path-info)
+         (string= it
+                  (getf request-to-test :path-info))))
+  (is (awhen (getf pattern-request :query-string)
+         (string= it
+                  (getf request-to-test :query-string))))
+  (is (awhen (getf pattern-request :server-name)
+         (string= it
+                  (getf request-to-test :server-name))))
+  (is (awhen (getf pattern-request :server-port)
+         (eql it
+              (getf request-to-test :server-port))))
+  (is (awhen (getf pattern-request :server-protocol)
+         (eq it
+             (getf request-to-test :server-protocol))))
+  (is (awhen (getf pattern-request :request-uri)
+         (string= it
+                  (getf request-to-test :request-uri))))
+  (is (awhen (getf pattern-request :raw-body)
+         (string= (stream-to-string it)
+                  (stream-to-string  (getf request-to-test :raw-body))))))

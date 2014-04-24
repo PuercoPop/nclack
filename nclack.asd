@@ -30,8 +30,7 @@
   :depends-on (:nclack
                :fiveam
                :flexi-streams
-               :cl-fad
-               :optima)
+               :anaphora)
   :pathname "tests/"
   :serial t
   :components ((:file "packages")

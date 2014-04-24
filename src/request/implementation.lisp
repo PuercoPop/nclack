@@ -15,10 +15,10 @@
              (special *request-env*))
 
     (loop
-       until (eq *request-state* 'end-of-request)
-       do
+       :until (eq *request-state* 'end-of-request)
+       :do
          (setq *request-env*
-               (append *request-env* 
+               (append *request-env*
                        (case *request-state*
                          ('first-line (process-first-line stream))
                          ('headers (process-headers stream))

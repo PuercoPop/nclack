@@ -18,7 +18,7 @@
                     (eq #\Return prev-char))) accum)
           ((eq #\Return current-char)
            (read-http-line-iter stream
-                                accum 
+                                accum
                                 current-char))
           (t
            (read-http-line-iter stream
@@ -26,8 +26,8 @@
                                 current-char)))))
 
 (defun append-to-string (string &rest chars)
-  (loop for char in chars
-     do
-       (vector-push-extend char string)
-       )
+  (loop
+     :for char :in chars
+     :do
+       (vector-push-extend char string))
   string)

@@ -28,7 +28,7 @@
 (test parse-body ())
 
 
-(test parse-chunked-body
+(test parse-chunked-body ()
       (let ((result (nclack.request::%parse-chunked-body
                      (make-string-input-stream
                       (format nil

@@ -54,14 +54,14 @@
   (with-open-file (input #P"~/test.lisp"
                          :direction :input
                          :if-does-not-exist :error)
-        (format output "~S" '(1 2 3))))
+    (format output "~S" '(1 2 3))))
 
 (conforms-to (read-file spec-file))
 
 (defun setup-test-tuples (path)
   "Get all the *.http files in the directory, match them with their
   *.lisp counterpart. Return a list of tuples in the form (001.http
-  001.lisp). Signal a condition if no *.lisp counter found[TODO]."
+  001.lisp). Signal a condition if no *.lisp counterpart found[TODO]."
   (loop for file in (remove-if-not (lambda (x) (string= "http" (pathname-type x))) (cl-fad:list-directory path))
      collect (list file (get-spec-file file))))
 

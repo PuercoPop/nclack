@@ -10,16 +10,23 @@
 ;; 2. Compare the request to the form in 001.lisp
 
 (test first-test ()
-      (let* ((http-stream (open (merge-pathnames "requests/valid/001.http"
-                                                 *specs-dir*)))
-             (expected-request (read (open
-                                      (merge-pathnames "requests/valid/001.lisp"
-                                                       *specs-dir*))))
-             (request-tests (read (open
-                                   (merge-pathnames "requests/valid/001.spec"
-                                                    *specs-dir*))))
-             (created-request (nclack:make-request http-stream)))
-        (declare (special expected-request)
-                 (special created-request))
-        (close http-stream)
-        (eval request-tests)))
+      (let ((created-request
+             (with-open-file (input-stream
+                              (merge-pathnames "requests/valid/001.http"
+                                               *gunicorn-tests-dir*)
+                              :direction :input)
+                (nclack:make-request input-stream)))
+            (pattern-request (list :request-method :PUT
+                                    :request-uri "/stuff/here?foo=bar"
+                                    :script-name "/stuff"
+                                    :query-string "foo=bar"
+                                    :server-name "127.0.0.1"
+                                    :server-port 5984
+                                    :http-host "127.0.0.1:5984"
+                                    :url-scheme :http
+                                    :server-protocol :HTTP/1.0
+                                    :content-length 14
+                                    :content-length "application/json"
+                                    :raw-body (make-string-input-stream "{\"nom\": \"nom\"}"))))
+
+        (conforms-to pattern-request created-request)))
