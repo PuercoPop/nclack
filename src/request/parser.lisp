@@ -20,14 +20,14 @@
 ;; plist, stream => plist
 (defun parse-headers (env stream)
   (append env (loop
-                 for line = (read-http-line stream)
-                 until (string= "" line)
-                 append (parse-header-line line))))
+                :for line = (read-http-line stream)
+                 :until (string= "" line)
+                 :append (parse-header-line line))))
 
 (defun parse-header-line (line)
   (destructuring-bind (key value)
       (cl-ppcre:split ": " line)
-    (list (make-keyword key) value)))
+    (list (make-keyword (string-upcase key)) value)))
 
 ;; plist, stream => plist
 (defun parse-body (env stream)

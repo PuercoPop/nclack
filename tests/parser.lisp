@@ -28,7 +28,7 @@
                      #\Return #\Linefeed
                      #\Return #\Linefeed
                      #\Return #\Linefeed)))))
-      (is (string= (getf result :content-type) "Application/json"))))
+      (is (string-equal (getf result :content-type) "Application/json"))))
 
 (deftest parse-body ())
 
