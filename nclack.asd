@@ -28,7 +28,7 @@
 
 (asdf:defsystem nclack-tests
   :depends-on (:nclack
-               :fiveam
+               :hu.dwim.stefil
                :flexi-streams
                :anaphora)
   :pathname "tests/"
@@ -36,9 +36,9 @@
   :components ((:file "packages")
                (:file "conf")
                (:file "utils")
-               (:file "runner")
                (:file "parser")
-               (:file "request")))
+               (:file "request")
+               (:file "runner")))
 
 (defmethod asdf:perform ((op asdf:test-op)
                          (system (eql (asdf:find-system :nclack))))

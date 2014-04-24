@@ -1,4 +1,4 @@
 #!/bin/sh
-sbcl --eval "(ql:quickload :nclack-tests)" \
-     --eval "(nclack-tests:test-runner)" \
+sbcl --eval "(ql:quickload :nclack)" \
+     --eval "(asdf:perform 'asdf:test-op :nclack)" \
      --eval "(progn (terpri) (sb-ext:quit))"

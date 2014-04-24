@@ -1,4 +1,4 @@
-(in-package :nclack.request)
+(in-package :nclack/request)
 
 (defun cl-rf ()
   (format nil "~C~C" #\Return #\Linefeed))

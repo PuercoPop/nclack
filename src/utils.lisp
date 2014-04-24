@@ -1,4 +1,4 @@
-(in-package :nclack.utils)
+(in-package :nclack/utils)
 
 (defun merge-plists (list-a list-b)
   "If a key from list-b does not exist in list-a add it to it."
@@ -9,4 +9,3 @@
          (unless (getf list-a key)
            (setf *merged-list* (append *merged-list*  `(,key ,(getf list-b key))))))
         *merged-list*))
-

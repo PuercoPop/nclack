@@ -1,15 +1,16 @@
 (in-package :nclack-tests)
 
-(def-suite request-suite
-    :description "Testing for the conversion between HTTP request to the Clack
-    'environ' representation.")
+;; Testing for the conversion between HTTP request to the Clack 'environ'
+;; representation.
+(defsuite (request-suite :in root-suite)
+    (run-child-tests))
 (in-suite request-suite)
 
 
 ;; 1. Read 001.http file
 ;; 2. Compare the request to the form in 001.lisp
 
-(test first-test ()
+(deftest first-test ()
       (let ((created-request
              (with-open-file (input-stream
                               (merge-pathnames "requests/valid/001.http"

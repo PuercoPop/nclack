@@ -1,4 +1,4 @@
-(in-package :nclack.request)
+(in-package :nclack/request)
 
 (defgeneric request-method (request)
   (:documentation "The HTTP request method, must be one of :GET , :HEAD , :OPTIONS , :PUT , :POST , or :DELETE ."))

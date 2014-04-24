@@ -1,5 +1,5 @@
 (defpackage :nclack-tests
-  (:use :cl :fiveam :nclack :flexi-streams)
+  (:use :cl :hu.dwim.stefil :nclack :flexi-streams)
   (:import-from :asdf :system-relative-pathname)
   (:import-from :anaphora
                 :awhen

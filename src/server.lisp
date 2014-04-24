@@ -1,4 +1,4 @@
-(in-package :nclack.server)
+(in-package :nclack./erver)
 
 (defparameter *port* 6969)
 
@@ -22,7 +22,7 @@
               :ipv6 nil)
     (bind-address server iolib:+ipv4-unspecified+ :port port :reuse-address t)
     (listen-on server :backlog 2)
-    (loop 
+    (loop
        (with-accept-connection (client server :wait t)
          (handle-request client)))))
 

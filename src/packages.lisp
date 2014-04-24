@@ -1,4 +1,4 @@
-(defpackage :nclack.utils
+(defpackage :nclack/utils
   (:use :cl))
 
 (defpackage :fsm
@@ -10,15 +10,15 @@
            :defstate
            :deffsm))
 
-(defpackage :nclack.request
-  (:use :cl :fsm :nclack.utils)
+(defpackage :nclack/request
+  (:use :cl :fsm :nclack/utils)
   (:import-from :alexandria #:make-keyword)
   (:export
    #:make-request))
 
-(defpackage :nclack.server
+(defpackage :nclack/server
   (:use :cl :iolib))
 
 (uiop/package:define-package :nclack
-  (:use :cl :nclack.request)
-  (:reexport :nclack.request))
+  (:use :cl :nclack/request)
+  (:reexport :nclack/request))

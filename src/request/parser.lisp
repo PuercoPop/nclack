@@ -1,4 +1,4 @@
-(in-package :nclack.request)
+(in-package :nclack/request)
 
 ;; stream -> env
 (defun parse-request (stream)

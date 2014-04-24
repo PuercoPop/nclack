@@ -1,4 +1,4 @@
-(in-package :nclack.request)
+(in-package :nclack/request)
 
 (define-condition http-parse-error ()
   ((prefix :initform "Parse Error" :reader prefix)
