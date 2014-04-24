@@ -50,7 +50,7 @@
                           #\Return #\Linefeed))))
         (expected (make-string-input-stream
                    (format nil
-                           "Wikipedia in ~C~C~C~Cchunks."
+                           "Wikipedia in~C~C~C~Cchunks."
                            #\Return #\Linefeed #\Return #\Linefeed))))
-  (is (string= (stream-to-string result)
-                     (stream-to-string expected)))))
+    (is (string= result
+                 (stream-to-string expected)))))
