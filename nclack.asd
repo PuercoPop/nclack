@@ -37,7 +37,9 @@
                (:file "conf")
                (:file "utils")
                (:file "parser")
-               (:file "request")
+               (:module "gunicorn"
+                        :components
+                        ((:file "gunicorn-tests")))
                (:file "runner")))
 
 (defmethod asdf:perform ((op asdf:test-op)
