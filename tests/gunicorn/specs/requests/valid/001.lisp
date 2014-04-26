@@ -1,6 +1,6 @@
 (list :request-method :PUT
       :request-uri "/stuff/here?foo=bar"
-      :script-name "/stuff"
+      :script-name "/stuff/here"
       :query-string "foo=bar"
       :server-name "127.0.0.1"
       :server-port 5984

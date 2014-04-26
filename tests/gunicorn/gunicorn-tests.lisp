@@ -5,7 +5,7 @@
 ;; representation.
 (defsuite (gunicorn-request-suite :in root-suite)
     (run-child-tests))
-(in-suite request-suite)
+(in-suite gunicorn-request-suite)
 
 
 (deftest test-001 ()
@@ -15,7 +15,7 @@
                 (nclack:make-request input-stream)))
             (pattern-request (list :request-method :PUT
       :request-uri "/stuff/here?foo=bar"
-      :script-name "/stuff"
+      :script-name "/stuff/here"
       :query-string "foo=bar"
       :server-name "127.0.0.1"
       :server-port 5984
