@@ -7,8 +7,11 @@
     (setf env (parse-headers env stream))
     (setf env (parse-body env stream))
 
+    (setf env (puri-transform env))
     (setf env (script-name-transform env))
-    (setf env (query-string-transform env))))
+    (setf env (query-string-transform env))
+    (setf env (server-name-transform env))
+    (setf env (server-port-transform env))))
 
 ;; plist, stream => plist
 (defun parse-first-line (env stream)

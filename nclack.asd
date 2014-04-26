@@ -10,6 +10,7 @@
   :license "<3"
   :depends-on (:iolib
                :cl-ppcre
+               :puri
                :alexandria
                :optima
                :closer-mop)

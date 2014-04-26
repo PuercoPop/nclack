@@ -13,6 +13,16 @@
 (defpackage :nclack/request
   (:use :cl :fsm :nclack/utils)
   (:import-from :alexandria #:make-keyword)
+  (:import-from :anaphora
+                :aif
+                :it)
+  (:import-from :puri
+                :parse-uri
+                :merge-uris
+                :uri-host
+                :uri-port
+                :uri-path
+                :uri-query)
   (:export
    #:make-request))
 
