@@ -17,7 +17,7 @@ prelude="""
 ;; representation.
 (defsuite (gunicorn-request-suite :in root-suite)
     (run-child-tests))
-(in-suite request-suite)
+(in-suite gunicorn-request-suite)
 
 """
 

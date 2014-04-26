@@ -22,9 +22,10 @@
                         ((:file "conditions")
                          (:file "utils")
                          (:file "fsm")
+                         (:file "transformations")
                          (:file "interface")
-                         (:file "implementation")
-                         (:file "parser")))))
+                         (:file "parser")
+                         (:file "compat")))))
 
 (asdf:defsystem nclack-tests
   :depends-on (:nclack
