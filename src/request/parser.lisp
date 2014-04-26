@@ -3,9 +3,12 @@
 ;; stream -> env
 (defun parse-request (stream)
   (let ((env (list)))
-    (setq env (parse-first-line env stream))
-    (setq env (parse-headers env stream))
-    (setq env (parse-body env stream))))
+    (setf env (parse-first-line env stream))
+    (setf env (parse-headers env stream))
+    (setf env (parse-body env stream))
+
+    (setf env (script-name-transform env))
+    (setf env (query-string-transform env))))
 
 ;; plist, stream => plist
 (defun parse-first-line (env stream)
